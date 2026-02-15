@@ -1,5 +1,6 @@
 package org.example.State;
 
+import org.example.Command.PlaceMoveCommand;
 import org.example.Entity.Board;
 import org.example.Entity.Game;
 import org.example.Enums.Symbol;
@@ -20,8 +21,10 @@ public class InProgressState extends GameState {
             return;
         }
 
-        // Place current player's symbol
-        board.setCell(row, col, game.getCurrentPlayer().getSymbol());
+        // Create and execute command
+        PlaceMoveCommand command = new PlaceMoveCommand(game, row, col, game.getCurrentPlayer());
+        game.getMoveInvoker().executeCommand(command);
+
         System.out.println(game.getCurrentPlayer().getName() + " placed " + game.getCurrentPlayer().getSymbol());
         board.printBoard();
 
@@ -57,6 +60,23 @@ public class InProgressState extends GameState {
     }
 
     public void notifyObserver(Game game) {
-        // This is called when switching players (not used now, moved to switchPlayer)
+        // This is called when switching players
+    }
+
+    @Override
+    public void undoMove(Game game) {
+        if (!game.getMoveInvoker().canUndo()) {
+            System.out.println("❌ No moves to undo!");
+            return;
+        }
+
+        // Undo the command
+        game.getMoveInvoker().undoLastMove();
+
+        // Switch back to previous player
+        switchPlayer(game);
+
+        System.out.println("✓ Move undone successfully!");
+        game.getBoard().printBoard();
     }
 }

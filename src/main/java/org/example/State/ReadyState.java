@@ -21,7 +21,7 @@ public class ReadyState extends GameState {
 
         if (playerList.size() == 2) {
             game.setGameState(new InProgressState());
-            game.setCurrentPlayer(playerList.get(0)); // Set first player
+            game.setCurrentPlayer(playerList.get(0));
             System.out.println("\nGame Started! " + game.getCurrentPlayer().getName() + "'s turn (Symbol: " + game.getCurrentPlayer().getSymbol() + ")");
         }
     }
@@ -32,5 +32,10 @@ public class ReadyState extends GameState {
 
     public void notifyObserver(Game game) {
         System.out.println("Game should be started first to win/lose/draw");
+    }
+
+    @Override
+    public void undoMove(Game game) {
+        System.out.println("❌ Game hasn't started yet. Nothing to undo!");
     }
 }

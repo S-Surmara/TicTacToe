@@ -1,5 +1,6 @@
 package org.example.Entity;
 
+import org.example.Command.MoveInvoker;
 import org.example.Enums.Symbol;
 import org.example.Observer.GameObserver;
 import org.example.Observer.Player;
@@ -17,14 +18,16 @@ public class Game {
     private Player currentPlayer;
     private List<Player> playerList;
     private int moves;
+    private MoveInvoker moveInvoker; // NEW
 
     public Game(Board board, List<GameWinningStratergy> gameWinningStratergy) {
         this.winner = null;
         this.board = board;
         this.moves = 0;
         this.gameWinningStratergy = gameWinningStratergy;
-        this.gameObservers = new ArrayList<>(); // Fixed: initialize
-        this.playerList = new ArrayList<>();     // Fixed: initialize
+        this.gameObservers = new ArrayList<>();
+        this.playerList = new ArrayList<>();
+        this.moveInvoker = new MoveInvoker(); // NEW
     }
 
     public Board getBoard() {
@@ -37,6 +40,16 @@ public class Game {
 
     public void setMoves() {
         this.moves += 1;
+    }
+
+    // NEW - for undo functionality
+    public void decrementMoves() {
+        this.moves -= 1;
+    }
+
+    // NEW - get move invoker
+    public MoveInvoker getMoveInvoker() {
+        return moveInvoker;
     }
 
     public Player getCurrentPlayer() {
@@ -98,5 +111,10 @@ public class Game {
 
     public void notifyObserver() {
         gameState.notifyObserver(this);
+    }
+
+    // NEW - undo move
+    public void undoMove() {
+        gameState.undoMove(this);
     }
 }

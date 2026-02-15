@@ -43,14 +43,29 @@ public class Main {
 
         board.printBoard();
 
+        System.out.println("Commands: Enter 'row col' to place, or 'u' to undo\n");
+
         // Game loop
         while (!(game.getGameState() instanceof org.example.State.GameOverState)) {
             try {
-                System.out.print("Enter row (0-2): ");
-                int row = scanner.nextInt();
+                System.out.print("Enter move (row col) or 'u' for undo: ");
+                String input = scanner.nextLine().trim();
 
-                System.out.print("Enter col (0-2): ");
-                int col = scanner.nextInt();
+                // Check for undo command
+                if (input.equalsIgnoreCase("u") || input.equalsIgnoreCase("undo")) {
+                    game.undoMove();
+                    continue;
+                }
+
+                // Parse row and col
+                String[] parts = input.split("\\s+");
+                if (parts.length != 2) {
+                    System.out.println("❌ Invalid format! Use: row col (e.g., '0 1') or 'u' for undo\n");
+                    continue;
+                }
+
+                int row = Integer.parseInt(parts[0]);
+                int col = Integer.parseInt(parts[1]);
 
                 if (row < 0 || row >= 3 || col < 0 || col >= 3) {
                     System.out.println("❌ Invalid position! Please enter values between 0-2\n");
@@ -59,9 +74,10 @@ public class Main {
 
                 game.placeSymbol(row, col);
 
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input! Please enter numbers or 'u' for undo.\n");
             } catch (Exception e) {
-                System.out.println("❌ Invalid input! Please enter numbers only.\n");
-                scanner.nextLine(); // Clear buffer
+                System.out.println("❌ Error: " + e.getMessage() + "\n");
             }
         }
 
