@@ -1,7 +1,6 @@
 package org.example.Entity;
 
 import org.example.Enums.Symbol;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ public class Board {
         this.rows = rows;
         this.cols = cols;
         this.board = new ArrayList<>();
-
         for (int i = 0; i < rows; i++) {
             List<Cell> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
@@ -24,7 +22,9 @@ public class Board {
         }
     }
 
-    public int getSize() { return rows*cols; }
+    public int getSize() {
+        return rows;
+    }
 
     public int getRows() {
         return rows;
@@ -41,5 +41,20 @@ public class Board {
     public void setCell(int row, int col, Symbol symbol) {
         board.get(row).get(col).setSymbol(symbol);
     }
-}
 
+    public void printBoard() {
+        System.out.println("\nCurrent Board:");
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Symbol sym = getCell(i, j).getSymbol();
+                if (sym == Symbol.EMPTY) {
+                    System.out.print(" . ");
+                } else {
+                    System.out.print(" " + sym + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+}

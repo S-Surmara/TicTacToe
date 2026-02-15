@@ -5,28 +5,26 @@ import org.example.Observer.GameObserver;
 import org.example.Observer.Player;
 import org.example.State.GameState;
 import org.example.Stratergy.GameWinningStratergy;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    Board board;
-    GameState gameState;
-    List<GameWinningStratergy> gameWinningStratergy;
-    List<GameObserver> gameObservers;
+    private Board board;
+    private GameState gameState;
+    private List<GameWinningStratergy> gameWinningStratergy;
+    private List<GameObserver> gameObservers;
+    private Player winner;
+    private Player currentPlayer;
+    private List<Player> playerList;
+    private int moves;
 
-    Player winner;
-
-    Player currentPlayer;
-
-    List<Player> playerList;
-
-    int moves;
-
-    public Game(Board board,List<GameWinningStratergy> gameWinningStratergy){
+    public Game(Board board, List<GameWinningStratergy> gameWinningStratergy) {
         this.winner = null;
         this.board = board;
         this.moves = 0;
         this.gameWinningStratergy = gameWinningStratergy;
+        this.gameObservers = new ArrayList<>(); // Fixed: initialize
+        this.playerList = new ArrayList<>();     // Fixed: initialize
     }
 
     public Board getBoard() {
@@ -73,30 +71,32 @@ public class Game {
         this.gameState = gameState;
     }
 
-    public boolean determineWin(){
+    public boolean determineWin() {
         boolean isWinner = gameWinningStratergy.stream()
                 .anyMatch(strategy -> strategy.checkWinner(board, currentPlayer));
-        this.winner = currentPlayer;
+        if (isWinner) {
+            this.winner = currentPlayer;
+        }
         return isWinner;
     }
 
-    public void addGameObservers(GameObserver gameObserver){
+    public void addGameObservers(GameObserver gameObserver) {
         gameObservers.add(gameObserver);
     }
 
-    public void notifyObservers(String name){
+    public void notifyObservers(String name) {
         gameObservers.forEach((observer) -> observer.notifyObservers(name));
     }
 
-    public void registerUser(Game game,String name, Symbol symbol) {
-        gameState.registerUser(game,name,symbol);
+    public void registerUser(String name, Symbol symbol) {
+        gameState.registerUser(this, name, symbol);
     }
 
-    public void placeSymbol(Game game,int row, int col, Player player){
-        gameState.placeSymbol(game,row,col,currentPlayer);
+    public void placeSymbol(int row, int col) {
+        gameState.placeSymbol(this, row, col, currentPlayer);
     }
 
-    public void notifyObserver(Game game){
-        gameState.notifyObserver(game);
+    public void notifyObserver() {
+        gameState.notifyObserver(this);
     }
 }
